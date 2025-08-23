@@ -1,0 +1,11 @@
+diff --git a/Makefile b/Makefile
+index be33e8c868ae..94ef53b79b16 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@
+ VERSION = 6
+ PATCHLEVEL = 16
+ SUBLEVEL = 0
+-EXTRAVERSION = -rc7
++EXTRAVERSION = -eudyptula
+ NAME = Baby Opossum Posse

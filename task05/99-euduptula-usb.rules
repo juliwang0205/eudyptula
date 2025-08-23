@@ -1,0 +1,6 @@
+
+# 插入设备时加载模块
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0627", ATTR{idProduct}=="0001", RUN+="/sbin/insmod /home/wangf23/eudyptula/task05/task05.ko"
+
+# 移除设备时卸载模块
+ACTION=="change", SUBSYSTEM=="usb", ATTR{idVendor}=="0627", ATTR{idProduct}=="0001", RUN+="/sbin/rmmod task05"

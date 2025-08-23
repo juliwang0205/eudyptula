@@ -1,0 +1,6 @@
+simulate hotplug
+
+plug:
+virsh attach-device ubuntu2404 usb-keyboard.xml
+unplug:
+virsh detach-device ubuntu2404 usb-keyboard.xml

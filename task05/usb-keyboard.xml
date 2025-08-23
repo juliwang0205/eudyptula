@@ -1,0 +1,5 @@
+<input type='keyboard' bus='usb'>
+  <vendor id='0xabcd'/>
+  <product id='0x5678'/>
+  <address type='usb' bus='0' port='2'/>
+</input>

@@ -1,0 +1,27 @@
+1. create a device node in /dev and then use normal file I/O
+cat /proc/devices to get the eudyptula major
+
+mknod /dev/eudyptula c 240 0
+chmod 666 /dev/eudyptula
+
+2. in kenrel cannot touch user space address
+copy_from_user and copy_to_user t touch the user space address.
+cannot directly read or print user space parameter
+
+3. donot use echo and cat to test the program
+
+echo "7c1caf2f50d1" > /dev/eudyptula
+cat /dev/eudyptula
+
+4. please use the normal file API to test the program
+open read write
+
+5. sizeof(*str1) sizeof(str2) is differently
+char str1[] = "7c1caf2f50d1";
+char *str2 = "7c1caf2f50d1";
+sizeof(str1) is 13
+sizeof(str2) is 8
+stzeof(*str2) is 1
+but str1[10] = str2[10]
+
+we can use len(str2) string.h to get the length of str2 

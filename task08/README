@@ -1,0 +1,2 @@
+gcc -pthread -o task08_user task08_user.c
+./task08_user
