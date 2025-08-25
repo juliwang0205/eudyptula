@@ -1,6 +1,6 @@
+ACTION=="bind", SUBSYSTEMS=="usb", \
+OPTIONS="log_level=debug", \
+ATTRS{idVendor}=="0627", ATTRS{idProduct}=="0001", \
+RUN+="/bin/bash -c 'echo 2-2:1.0 > /sys/bus/usb/drivers/usbhid/unbind'", \
+RUN+="/bin/bash -c 'echo 2-2:1.0 > /sys/bus/usb/drivers/eudyptula/bind'"
 
-# 插入设备时加载模块
-ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0627", ATTR{idProduct}=="0001", RUN+="/sbin/insmod /home/wangf23/eudyptula/task05/task05.ko"
-
-# 移除设备时卸载模块
-ACTION=="change", SUBSYSTEM=="usb", ATTR{idVendor}=="0627", ATTR{idProduct}=="0001", RUN+="/sbin/rmmod task05"
