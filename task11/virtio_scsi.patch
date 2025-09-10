@@ -1,0 +1,74 @@
+diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
+index 21ce3e940192..3992fa6332cb 100644
+--- a/drivers/scsi/virtio_scsi.c
++++ b/drivers/scsi/virtio_scsi.c
+@@ -41,6 +41,42 @@ module_param(virtscsi_poll_queues, uint, 0644);
+ MODULE_PARM_DESC(virtscsi_poll_queues,
+ 		 "The number of dedicated virtqueues for polling I/O");
+ 
++#define ID_SIZE 13
++
++struct eudyptula_sysfs_data {
++	void *data;
++	int data_size;
++};
++static struct kobject *eudyptula_kobj;
++struct eudyptula_sysfs_data id_data;
++
++/*
++ * The "id" file store the id.
++ */
++static ssize_t id_show(struct kobject *kobj, struct kobj_attribute *attr,
++			char *buf)
++{
++    printk(KERN_INFO "eudyptula task09: id show %s\n", (char *)id_data.data);
++    return sysfs_emit(buf, "%s\n", (char *)id_data.data);
++}
++
++static ssize_t id_store(struct kobject *kobj, struct kobj_attribute *attr,
++			 const char *buf, size_t count)
++{
++    printk(KERN_INFO "eudyptula task09: id store %s\n", buf);
++    char *tmp_data = id_data.data;
++    memcpy(tmp_data, buf, id_data.data_size);
++    tmp_data[id_data.data_size - 1] = '\0';
++    printk(KERN_INFO "eudyptula task09: id data store %s\n",
++	   (char *)id_data.data);
++    return id_data.data_size;
++}
++
++static const struct kobj_attribute id_attribute =
++    // kenrel 6.16 cannot support with S_IWOTH in sysfs
++	__ATTR(id, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH,
++	       id_show, id_store);
++
+ /* Command queue element */
+ struct virtio_scsi_cmd {
+ 	struct scsi_cmnd *sc;
+@@ -1076,6 +1112,17 @@ static int __init virtio_scsi_init(void)
+ 	if (ret < 0)
+ 		goto error;
+ 
++	id_data.data_size = ID_SIZE;
++	id_data.data = kmalloc(id_data.data_size, GFP_KERNEL);
++
++	eudyptula_kobj = kobject_create_and_add("eudyptula", kernel_kobj);
++	if (!eudyptula_kobj)
++		return -ENOMEM;
++
++	/* Create the files associated with this kobject */
++	ret = sysfs_create_file(eudyptula_kobj, &id_attribute.attr);
++	if (ret)
++		kobject_put(eudyptula_kobj);
+ 	return 0;
+ 
+ error:
+@@ -1091,6 +1138,8 @@ static void __exit virtio_scsi_fini(void)
+ 	unregister_virtio_driver(&virtio_scsi_driver);
+ 	mempool_destroy(virtscsi_cmd_pool);
+ 	kmem_cache_destroy(virtscsi_cmd_cache);
++	kobject_put(eudyptula_kobj);
++	kfree(id_data.data);
+ }
+ module_init(virtio_scsi_init);
+ module_exit(virtio_scsi_fini);
