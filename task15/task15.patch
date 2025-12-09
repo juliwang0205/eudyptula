@@ -1,0 +1,56 @@
+diff --git a/Makefile b/Makefile
+index 9a99de8135d1..039f5736e9fe 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@
+ VERSION = 6
+ PATCHLEVEL = 16
+ SUBLEVEL = 0
+-EXTRAVERSION = -eudyptula-task
++EXTRAVERSION = -eudyptula-task15
+ NAME = Baby Opossum Posse
+ 
+ # *DOCUMENTATION*
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index cfb5ca41e30d..453b3183bffc 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -434,5 +434,6 @@
+ 545	x32	execveat		compat_sys_execveat
+ 546	x32	preadv2			compat_sys_preadv64v2
+ 547	x32	pwritev2		compat_sys_pwritev64v2
++548     common  euduptula   sys_eudyptula
+ # This is the end of the legacy x32 range.  Numbers 548 and above are
+ # not special and are not to be used for x32-specific syscalls.
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index e5603cc91963..3ba65835d974 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -475,6 +475,7 @@ asmlinkage long sys_lseek(unsigned int fd, off_t offset,
+ asmlinkage long sys_read(unsigned int fd, char __user *buf, size_t count);
+ asmlinkage long sys_write(unsigned int fd, const char __user *buf,
+ 			  size_t count);
++asmlinkage long sys_eudyptula(unsigned in high_id, unsigned int low_id);
+ asmlinkage long sys_readv(unsigned long fd,
+ 			  const struct iovec __user *vec,
+ 			  unsigned long vlen);
+diff --git a/kernel/sys.c b/kernel/sys.c
+index adc0de0aa364..c9bd955824e0 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1387,6 +1387,15 @@ SYSCALL_DEFINE1(olduname, struct oldold_utsname __user *, name)
+ }
+ #endif
+ 
++SYSCALL_DEFINE2(eudyptula, unsigned int, high_id, unsigned int, low_id)
++{
++    u64 id = 0x7c1caf2f50d1;
++
++    if (id == (((u64)high_id << 32) | low_id))
++        return 0;
++    return -EINVAL;
++}
++
+ SYSCALL_DEFINE2(sethostname, char __user *, name, int, len)
+ {
+ 	int errno;
